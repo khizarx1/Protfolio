@@ -1,9 +1,10 @@
 import React from 'react'
-import Register from './register'
+import Register from './Register'
 
 function index() {
   return (
     <>
+        
         <Register />
     </>
   )

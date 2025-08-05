@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Frontend from './Frontend'
 import Dashboard from './Dashboard'
 import Authentication from './Authentication'
@@ -10,10 +10,9 @@ function Index() {
         <BrowserRouter>
             <Routes>
                 <Route path='/*' element={<Frontend />} />
-                <Route path='/Dashboard' element={<Dashboard />} />
-                <Route path='/Authentication' element={<Authentication />} />
+                <Route path='/Dashboard/*' element={<Dashboard />} />
+                <Route path='/Authentication/*' element={<Authentication />} />
             </Routes>
-            
         </BrowserRouter>
     )
 }

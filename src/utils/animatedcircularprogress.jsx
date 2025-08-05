@@ -8,17 +8,24 @@ function AnimatedCircularProgress({ product }) {
     const { ref, inView } = useInView({ triggerOnce: true });
 
     useEffect(() => {
-        if (inView) {
-            let start = 0;
-            const interval = setInterval(() => {
-                start += 1;
-                if (start <= product.value) {
-                    setProgress(start);
-                } else {
-                    clearInterval(interval);
-                }
-            }, 15); // speed of animation
-        }
+        if (!inView) return;
+
+        let start = null;
+        const duration = 1000; // ms
+        const target = product.value;
+
+        const animate = (timestamp) => {
+            if (!start) start = timestamp;
+            const elapsed = timestamp - start;
+            const progressValue = Math.min((elapsed / duration) * target, target);
+            setProgress(Math.floor(progressValue));
+
+            if (progressValue < target) {
+                requestAnimationFrame(animate);
+            }
+        };
+
+        requestAnimationFrame(animate);
     }, [inView, product.value]);
 
     return (
@@ -27,6 +34,7 @@ function AnimatedCircularProgress({ product }) {
                 value={progress}
                 text={`${progress}%`}
                 styles={buildStyles({
+                    pathTransition: 'stroke-dashoffset 1s ease-out', // Smooth stroke animation
                     pathColor: '#1EE4E9',
                     textColor: '#fff',
                     trailColor: '#1b1b1b',

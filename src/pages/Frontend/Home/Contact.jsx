@@ -3,8 +3,8 @@ import { supabase } from '../../../config/supabaseClient'
 
 import Sectionname from '../../components/common/Sectionname'
 import { toast } from 'react-toastify'
-import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import { whiteSpinner } from '../../../utils/whitespinner';
 
 const initialState = {
     name: '',
@@ -22,52 +22,42 @@ function Contact() {
         { icon: 'fa-brands rounded-full fa-linkedin-in', link: '' },
     ]
 
-    const whiteSpinner = (
-        <LoadingOutlined
-            style={{
-                fontSize: 20,
-                color: 'white',
-            }}
-            spin
-        />
-    );
-
     // State to manage form data
     const [state, setState] = useState(initialState);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
         setIsProcessing(true);
+
         try {
             const { error } = await supabase
-                .from('contacts')
-                .insert([state])
+                .from('contacts') // make sure your table name is correct
+                .insert([state]);
+
             if (error) {
                 console.error('Error inserting data:', error);
-                toast.error('Failed to send message. Please try again later.');
+                toast.error('Failed to save message.');
             } else {
-                toast.success('Message sent successfully!');
-                setState(initialState); // Reset form
+                toast.success('Message saved successfully!');
+                setState(initialState); // clear form after success
             }
-        } catch (error) {
-            console.error('Error inserting data:', error);
-            toast.error('An error occurred while sending your message.');
+
+        } catch (err) {
+            console.error('Submit Error:', err);
+            toast.error('Something went wrong.');
         } finally {
-            setIsProcessing(false); // Reset processing state
+            setIsProcessing(false);
         }
+    };
 
 
-
-
-    }
     const handleChange = e => {
         setState({ ...state, [e.target.name]: e.target.value });
     }
 
     return (
-        <section id='projects' className='lg:pb-20 pb-10 px-10 md:px-15 gap-4 grid grid-cols-1 lg:grid-cols-2'>
+        <section id='contact' className='lg:pb-20 pb-10 px-10 md:px-15 gap-4 grid grid-cols-1 lg:grid-cols-2'>
             {/* left */}
             <div className='space-y-4 text-center lg:text-start text-white'>
                 <Sectionname first={'Contact'} second={'Me'} customClass={'text-xl text-center'} />
@@ -96,7 +86,7 @@ function Contact() {
                 <input onChange={handleChange} name='email' className='bg-[#545456] p-2 rounded-lg' type="email" placeholder='Enter Your Email' />
                 <input onChange={handleChange} name='subject' className='bg-[#545456] p-2 rounded-lg' type="text" placeholder='Enter Your Subject' />
                 <textarea onChange={handleChange} name="message" className='bg-[#545456] p-2 rounded-lg' rows={5} placeholder='Enter Your Massege'></textarea>
-                <button style={{ boxShadow: '0 0 20px #1EE4E9' }} className='py-1 text-sm text-[#081C29] font-semibold bg-[#1EE4E9] rounded-lg cursor-pointer'>{isProcessing ? <Spin /> : 'Submit'}</button>
+                <button style={{ boxShadow: '0 0 20px #1EE4E9' }} className='py-1 text-sm text-[#081C29] font-semibold bg-[#1EE4E9] rounded-lg cursor-pointer'>{isProcessing ? <Spin indicator={whiteSpinner} /> : 'Submit'}</button>
             </form>
         </section>
 
